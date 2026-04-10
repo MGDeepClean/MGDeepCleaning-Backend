@@ -26,7 +26,7 @@ app.use(cors({
     if (!origin) return callback(null, true);
     
     // 2. Allow local development automatically
-    const isLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
+    const isLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1') || origin.endsWith('.vercel.app');
     
     // 3. Allow explicitly listed production origins
     if (isLocal || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins[0] === true) {
