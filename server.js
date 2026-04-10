@@ -25,8 +25,12 @@ app.use(cors({
     // 1. Allow mobile apps/curl (no origin)
     if (!origin) return callback(null, true);
     
-    // 2. Allow local development automatically
-    const isLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1') || origin.endsWith('.vercel.app');
+    // 2. Allow local development & Vercel deployments automatically
+    const isLocal = !origin || 
+                   origin.startsWith('http://localhost') || 
+                   origin.startsWith('http://127.0.0.1') || 
+                   origin.includes('.vercel.app') ||
+                   origin.includes('mgdeepclean.com');
     
     // 3. Allow explicitly listed production origins
     if (isLocal || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins[0] === true) {
