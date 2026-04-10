@@ -19,28 +19,32 @@ const app = express();
 app.use(helmet({
   contentSecurityPolicy: false, // Disabled to allow your external CDNs (FontAwesome, Tailwind, Google Fonts)
 }));
-const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : [true];
+// Dedicated CORS configuration
+const allowedOrigins = [
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  'https://mg-deep-cleaning.vercel.app',
+  'https://mgdeepclean.com'
+];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // 1. Allow mobile apps/curl (no origin)
+    // allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     
-    // 2. Allow local development & Vercel deployments automatically
-    const isLocal = !origin || 
-                   origin.startsWith('http://localhost') || 
-                   origin.startsWith('http://127.0.0.1') || 
-                   origin.includes('.vercel.app') ||
-                   origin.includes('mgdeepclean.com');
+    const isVercel = origin.endsWith('.vercel.app');
+    const isTrusted = allowedOrigins.indexOf(origin) !== -1 || isVercel;
     
-    // 3. Allow explicitly listed production origins
-    if (isLocal || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins[0] === true) {
+    if (isTrusted) {
       callback(null, true);
     } else {
+      console.log('CORS blocked for origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
