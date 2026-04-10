@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
+// MG Deep Clean - API Version 1.1 (Production)
+const mongoose = require('mongoose');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
