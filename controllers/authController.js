@@ -76,7 +76,7 @@ const verifyOTP = async (req, res) => {
     // Create JWT
     const token = jwt.sign(
         { email, role: 'admin' }, 
-        process.env.JWT_SECRET || 'mg_deep_clean_secret_key_123', 
+        process.env.JWT_SECRET, 
         { expiresIn: '24h' }
     );
 
