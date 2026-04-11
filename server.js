@@ -63,6 +63,12 @@ app.use((req, res, next) => {
 // Database Connection check
 if (!process.env.MONGODB_URI) {
   console.error("❌ MONGODB_URI is not defined in environment variables");
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+  console.error("❌ JWT_SECRET is not defined in environment variables");
+  if (process.env.NODE_ENV === 'production') process.exit(1);
 }
 
 mongoose.connect(process.env.MONGODB_URI || "")
