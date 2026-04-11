@@ -60,36 +60,40 @@ app.use((req, res, next) => {
   next();
 });
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI)
+// Database Connection check
+if (!process.env.MONGODB_URI) {
+  console.error("❌ MONGODB_URI is not defined in environment variables");
+}
+
+mongoose.connect(process.env.MONGODB_URI || "")
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
+
+// Health Check Route
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'online', 
+    timestamp: new Date(),
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
 
 // Register Routes
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/quote', quoteRoutes);
 app.use('/api/auth', authRoutes);
 
-const path = require('path');
-
-// Serve static files from the frontend folder
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// 404 Handler
+// 404 Handler for API
 app.use((req, res) => {
-  if (req.accepts('html') && !req.path.startsWith('/api/')) {
-    res.status(404).sendFile(path.join(__dirname, '../frontend/404.html'));
-  } else {
-    res.status(404).json({ error: "Route not found" });
-  }
+  res.status(404).json({ error: "Route not found" });
 });
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Global Error Handler:", err.stack);
   res.status(err.status || 500).json({
     error: err.message || "Internal Server Error",
-    message: process.env.NODE_ENV === 'production' ? "Something went wrong on our end." : err.message
+    details: err.message // Providing details to help the user debug the 500 error
   });
 });
 
