@@ -24,17 +24,18 @@ const allowedOrigins = [
   'http://localhost:5500',
   'http://127.0.0.1:5500',
   'https://mg-deep-cleaning.vercel.app',
-  'https://mgdeepclean.com'
+  'https://mgdeepclean.com',
+  'https://mgdeepclean.mgdeepcleaningservices.workers.dev'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
     // allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
-    
+
     const isVercel = origin.endsWith('.vercel.app');
     const isTrusted = allowedOrigins.indexOf(origin) !== -1 || isVercel;
-    
+
     if (isTrusted) {
       callback(null, true);
     } else {
@@ -77,8 +78,8 @@ mongoose.connect(process.env.MONGODB_URI || "")
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'online', 
+  res.json({
+    status: 'online',
     timestamp: new Date(),
     mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
