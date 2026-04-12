@@ -24,8 +24,8 @@ const allowedOrigins = [
   'http://localhost:5500',
   'http://127.0.0.1:5500',
   'https://mg-deep-cleaning.vercel.app',
-  'https://mgdeepclean.com',
-  'https://mgdeepclean.mgdeepcleaningservices.workers.dev'
+  'https://mgdeepcleaning.com',
+  'https://mgdeepcleaning.mgdeepcleaningservices.workers.dev'
 ];
 
 app.use(cors({
